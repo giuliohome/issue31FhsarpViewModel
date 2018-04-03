@@ -19,27 +19,16 @@ type MainViewModel() as self =
             [ <@@ self.RecentsNotEmpty @@>])
 
     let recents = ObservableCollection<RecentFile>(getRecent())     
-    //giuliohome workaround
-    //let recentCollectionChanged = self.Factory.Backing(<@ self.RecentCollectionChanged @>, false)
 
     do
-        //giuliohome workaround
-        //recents.CollectionChanged.Add  (fun _ -> 
-        //   self.RecentCollectionChanged <- not self.RecentCollectionChanged )
-        self.DependencyTracker.AddPropertyDependencies(<@@ self.RecentsNotEmpty @@>, [ <@@ self.Recents @@> ])
-        //giuliohome workaround
-        //self.DependencyTracker.AddPropertyDependencies(<@@ self.RecentsNotEmpty @@>, [ <@@ self.RecentCollectionChanged @@> ])
+        recents.CollectionChanged.Add  (fun _ -> self.RaisePropertyChanged(<@ self.RecentsNotEmpty @>))
 
     member x.Recents = recents 
-    member x.Add2Recents r = 
-        x.Recents.Insert(0,r)
+    member x.Add2Recents r = x.Recents.Insert(0,r)
         
         
-    member x.ClearRecents() = 
-        x.Recents.Clear()
+    member x.ClearRecents() = x.Recents.Clear()
     member x.RecentsNotEmpty = x.Recents.Count > 0
-    //giuliohome workaround
-    //member x.RecentCollectionChanged with get() = recentCollectionChanged.Value and set value = recentCollectionChanged.Value <- value
     
     member x.NewBookCmd = newBookCmd
     member x.ClearRecentsCmd = clearRecentsCmd
